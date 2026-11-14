@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>TOOL TÀI XỈU MD5 LC79 — ĐẢO 1-1</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0e1a;
+      --card: #111827;
+      --accent: #00f0ff;
+      --accent2: #b388ff;
+      --danger: #ff3d7f;
+      --success: #00e676;
+      --muted: #94a3b8;
+      --radius: 20px;
+      --font-display: 'Orbitron', sans-serif;
+      --font-main: 'Poppins', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(ellipse at 20% 30%, #1a1f35, var(--bg) 70%);
+      font-family: var(--font-main);
+      color: #e2e8f0;
+      padding: 16px;
+    }
+    .wrap { width: 100%; max-width: 720px; }
+    .card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+      backdrop-filter: blur(4px);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(179,136,255,0.06);
+      transition: all 0.3s;
+    }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+    .sub { font-size: 13px; color: var(--muted); letter-spacing: 0.3px; margin-top: 2px; }
+    .status-badge {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: rgba(255,255,255,0.03);
+      padding: 6px 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      display: inline-block;
+    }
+    .hidden { display: none !important; }
+    .circle-wrap { position: relative; margin: 20px auto 10px; width: 260px; height: 260px; }
+    svg { display: block; width: 100%; height: 100%; }
+    .pred-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -55%);
+      font-family: var(--font-display);
+      font-size: 62px;
+      font-weight: 900;
+      z-index: 4;
+      text-shadow: 0 0 30px currentColor;
+      letter-spacing: 2px;
+    }
+    .pred-percent {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: 72%;
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--muted);
+      background: rgba(0,0,0,0.3);
+      padding: 2px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+    .glow-strong { filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.4)); }
+    .history-title {
+      margin-top: 20px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding-bottom: 8px;
+    }
+    .table-container {
+      margin-top: 6px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.2);
+    }
+    table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; }
+    th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--muted); }
+    th {
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 11px;
+      background: rgba(0,0,0,0.25);
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+    }
+    .badge-t {
+      background: linear-gradient(90deg, #00e6ff, #7c4dff);
+      color: #0b0e1a;
+      box-shadow: 0 0 12px rgba(0, 230, 255, 0.2);
+    }
+    .badge-x {
+      background: linear-gradient(90deg, #ff3d7f, #ff6b9d);
+      color: #0b0e1a;
+      box-shadow: 0 0 12px rgba(255, 61, 127, 0.2);
+    }
+    .badge-w { color: var(--muted); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); }
+    .badge-win { color: var(--success); text-shadow: 0 0 12px var(--success); }
+    .badge-lose { color: var(--danger); text-shadow: 0 0 12px var(--danger); }
+    .json-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: #060b18;
+      border-radius: 12px;
+      max-height: 200px;
+      overflow: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #7aa9ff;
+      display: none;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    @media(max-width: 520px) {
+      .pred-text { font-size: 48px; }
+      .circle-wrap { width: 200px; height: 200px; }
+      .title { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="mainCard">
+    <div class="header">
+      <div>
+        <div class="title">⚡ TÀI XỈU MD5</div>
+        <div class="sub" id="subInfo">ĐẢO 1-1 · 5 phiên</div>
+      </div>
+      <div class="status-badge" id="statusText">● ĐANG CHẠY</div>
+    </div>
+    <div class="circle-wrap" aria-hidden="true">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="G" x1="0" x2="1">
+            <stop offset="0%" stop-color="#b388ff"/>
+            <stop offset="100%" stop-color="#00f0ff"/>
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.04)" stroke-width="10" fill="none" />
+        <circle id="ring" cx="100" cy="100" r="80" stroke="url(#G)" stroke-width="10" stroke-linecap="round"
+          stroke-dasharray="502.65" stroke-dashoffset="502.65" transform="rotate(-90 100 100)"></circle>
+      </svg>
+      <div class="pred-text" id="predText">—</div>
+      <div class="pred-percent" id="predPercent">—</div>
+    </div>
+    <div id="reasonText" class="hidden"></div>
+    <div class="history-title">📊 LỊCH SỬ & DỰ ĐOÁN</div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr><th>PHIÊN</th><th>DỰ ĐOÁN</th><th>KẾT QUẢ</th><th>ĐÁNH GIÁ</th></tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+    <div class="json-box" id="jsonBox">Double-click here to paste JSON (debug)</div>
+  </div>
+</div>
+
+<script>
+/* ─── CONFIG ─── */
+const API = "https://wtxmd52.tele68.com/v1/txmd5/sessions";
+let POLL_MS = 2000;
+
+const State = { running:true, log:[], lastSessionId:0 };
+
+const $ = id => document.getElementById(id);
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function isMd5(s){ return typeof s==='string' && /^[a-f0-9]{32}$/i.test(s); }
+
+function normalize(raw){
+  const s = String(raw||'').trim().toUpperCase();
+  if(s.includes('TÀI') || s.includes('TAI')) return 'TÀI';
+  if(s.includes('XỈU') || s.includes('XIU')) return 'XỈU';
+  const n = parseInt(s);
+  if(!isNaN(n)) return n>=11 ? 'TÀI' : 'XỈU';
+  if(isMd5(s)){
+    const last4 = s.slice(-4);
+    const v = parseInt(last4, 16);
+    if(!isNaN(v)) return (v % 2 === 0) ? 'TÀI' : 'XỈU';
+  }
+  return 'XỈU';
+}
+
+const ring = $('ring'), predText = $('predText'), predPercent = $('predPercent');
+const historyBody = $('historyBody'), statusText = $('statusText');
+
+function setRing(percent){
+  const full = 2*Math.PI*80;
+  const dash = full * (1 - clamp(percent,0,100)/100);
+  ring.setAttribute('stroke-dashoffset', dash);
+  predPercent.innerText = percent + '%';
+}
+function glowIfHigh(conf){
+  if(conf >= 85) predText.classList.add('glow-strong');
+  else predText.classList.remove('glow-strong');
+}
+function renderPredictionUI(rec){
+  predText.innerText = rec.prediction;
+  predText.style.color = rec.prediction === 'TÀI' ? 'var(--accent)' : 'var(--danger)';
+  setRing(rec.confidence || 60);
+  glowIfHigh(rec.confidence || 0);
+  statusText.innerText = '● ' + (rec.confidence >= 80 ? 'TIN CẬY CAO' : 'ĐANG PHÂN TÍCH');
+  if(rec.reason){
+    $('reasonText').innerText = rec.reason;
+    $('reasonText').style.display = 'block';
+  }
+}
+function renderHistory(){
+  historyBody.innerHTML = '';
+  State.log.slice(0,40).forEach(item=>{
+    const predCls = item.prediction==='TÀI' ? 'badge-t' : 'badge-x';
+    const actualHtml = item.status==='pending' ? '<span class="badge badge-w">⏳</span>' : (item.actual==='TÀI' ? `<span class="badge badge-t">${item.actual}</span>` : `<span class="badge badge-x">${item.actual}</span>`);
+    const evalHtml = item.status==='pending' ? '<span class="badge badge-w">...</span>' : (item.status==='WIN' ? '<span class="badge badge-win">✓ WIN</span>' : '<span class="badge badge-lose">✗ LOSE</span>');
+    historyBody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>#${item.session}</td>
+        <td><span class="badge ${predCls}">${item.prediction}</span></td>
+        <td>${actualHtml}</td>
+        <td>${evalHtml}</td>
+      </tr>
+    `);
+  });
+}
+
+async function fetchWithTimeout(url, timeout=5000){
+  try {
+    const ctrl = new AbortController();
+    const id = setTimeout(()=>ctrl.abort(), timeout);
+    const res = await fetch(url, {signal: ctrl.signal});
+    clearTimeout(id);
+    const txt = await res.text();
+    try { return {ok:true, json: JSON.parse(txt), raw: txt}; }
+    catch(e) { return {ok:true, json:null, raw: txt}; }
+  } catch(e) {
+    return {ok:false, err:e};
+  }
+}
+async function getHistory(){
+  let r = await fetchWithTimeout(API, 4500);
+  if(!r.ok){
+    const proxy = 'https://api.allorigins.win/raw?url=';
+    r = await fetchWithTimeout(proxy + encodeURIComponent(API), 7000);
+    if(!r.ok) return {ok:false, err:r.err};
+  }
+  const j = r.json;
+  if(j){
+    if(Array.isArray(j)) return {ok:true, list:j};
+    if(j.list && Array.isArray(j.list)) return {ok:true, list:j.list};
+    if(j.session && Array.isArray(j.session.history)) return {ok:true, list:j.session.history};
+    for(const k in j){ if(Array.isArray(j[k]) && j[k].length>0) return {ok:true, list:j[k]}; }
+    return {ok:true, list:[j]};
+  } else {
+    const raw = r.raw || '';
+    const md = raw.match(/[a-f0-9]{32}/ig);
+    if(md && md.length) return {ok:true, list: md.slice(0,40).map((h,i)=>({id:i+1,resultTruyenThong:h}))};
+    const nums = raw.match(/(?:\d{1,2}(?:\s*,\s*$)){3,}/);
+    if(nums) {
+      const arr = nums[0].split(',').map(s=>s.trim()).filter(Boolean).map((v,i)=>({id:i+1,resultTruyenThong:v}));
+      return {ok:true, list:arr};
+    }
+    return {ok:false, err:'No JSON / no recognizable data'};
+  }
+}
+
+/* ============================================================
+   THUẬT TOÁN: ĐẢO THUẬN 1-1 TRONG 5 PHIÊN GẦN NHẤT
+   + Nếu confidence < 50% → tự đảo dự đoán, set confidence = 54%
+   ============================================================ */
+function analyzeHistory(rawList){
+  const results = rawList.map(item => normalize(
+    item.resultTruyenThong || item.result || item.value || ''
+  ));
+
+  if(results.length < 2){
+    return {
+      prediction: Math.random() < 0.5 ? 'TÀI' : 'XỈU',
+      confidence: 54,
+      reason: 'Không đủ dữ liệu'
+    };
+  }
+
+  const last5 = results.slice(0, Math.min(5, results.length));
+  
+  let altCount = 0;
+  for(let i = 0; i < last5.length - 1; i++){
+    if(last5[i] !== last5[i+1]) altCount++;
+  }
+  
+  const lastResult = last5[0];
+  const opposite = lastResult === 'TÀI' ? 'XỈU' : 'TÀI';
+  
+  let prediction, confidence, reason;
+  
+  if(last5.length >= 5 && altCount === 4){
+    prediction = opposite;
+    confidence = 88;
+    reason = `✓ Đảo 1-1 hoàn hảo 5 phiên (${last5.join(' → ')}) → bẻ sang ${opposite}`;
+  } else if(last5.length >= 4 && altCount === 3){
+    prediction = opposite;
+    confidence = 70;
+    reason = `~ Đảo 1-1 gần đúng (${altCount}/4 lần đảo) → theo đảo ${opposite}`;
+  } else if(last5.length >= 3 && altCount === 2){
+    prediction = opposite;
+    confidence = 58;
+    reason = `Đảo nhẹ (${altCount}/4 lần đảo) → nghiêng ${opposite}`;
+  } else {
+    prediction = lastResult;
+    confidence = 45;
+    reason = `Không có pattern đảo rõ (${altCount}/4) → theo phiên gần nhất ${lastResult}`;
+  }
+
+  /* ─── RULE MỚI: confidence < 50% → đảo dự đoán, set 54% ─── */
+  if(confidence < 50){
+    prediction = prediction === 'TÀI' ? 'XỈU' : 'TÀI';
+    confidence = 54;
+    reason = `⚠ Confidence gốc <50% → đảo dự đoán thành ${prediction} (54%) · ${reason}`;
+  }
+
+  return {
+    prediction,
+    confidence,
+    reason,
+    details: [{
+      name: 'ĐẢO 1-1',
+      pred: prediction,
+      weight: confidence
+    }]
+  };
+}
+
+/* VERIFY */
+function verifyWithSession(session){
+  const sid = Number(session.id || session.session || session.seq || 0);
+  const actual = normalize(session.resultTruyenThong || session.result || session.value || '');
+  const rec = State.log.find(r => r.session === sid);
+  if(rec && rec.status === 'pending'){
+    rec.actual = actual;
+    rec.status = (rec.prediction === actual) ? 'WIN' : 'LOSE';
+  }
+}
+
+let loopTimer = null;
+async function cycle(){
+  const res = await getHistory();
+  if(!res.ok){ $('jsonBox').style.display='block'; $('jsonBox').innerText = 'Fetch error: ' + (res.err||''); return; }
+
+  const list = res.list;
+  if(!list || list.length===0){ $('jsonBox').style.display='block'; $('jsonBox').innerText = 'No list in response'; return; }
+
+  const latest = list[0];
+  const latestId = Number(latest.id || latest.session || latest.seq || 0) || (State.lastSessionId+1);
+  verifyWithSession(latest);
+
+  const nextId = latestId + 1;
+  if(!State.log.some(r => r.session === nextId)){
+    const analysis = analyzeHistory(list);
+    const record = {
+      session: nextId,
+      prediction: analysis.prediction,
+      confidence: analysis.confidence,
+      reason: analysis.reason,
+      status: 'pending',
+      actual: null,
+      ts: Date.now()
+    };
+    State.log.unshift(record);
+    if(State.log.length > 400) State.log.pop();
+    renderPredictionUI(record);
+    renderHistory();
+  } else {
+    const rec = State.log.find(r => r.session === nextId);
+    if(rec) renderPredictionUI(rec);
+  }
+
+  $('jsonBox').style.display = 'none';
+  State.lastSessionId = latestId;
+}
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{ 
+    cycle(); 
+    loopTimer = setInterval(cycle, POLL_MS); 
+    $('subInfo').innerText = new Date().toLocaleString();
+  }, 200);
+});
+
+$('jsonBox').addEventListener('dblclick', ()=>{ 
+  navigator.clipboard.readText().then(t=>{ 
+    $('jsonBox').innerText = t; 
+    $('jsonBox').style.display='block'; 
+  }).catch(()=>{});
+});
+
+setRing(60);
+predText.innerText = '—';
+predPercent.innerText = '—';
+statusText.innerText = '● KHỞI TẠO';
+setInterval(()=>{ 
+  const d = new Date(); 
+  $('subInfo').innerText = d.toLocaleString(); 
+}, 1000);
+
+</script>
+</body>
+</html>
